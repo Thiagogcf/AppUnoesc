@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Infraestrutura Urbana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 800px;
+        }
+        h1 { color: #333; }
+        form {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        label { display: block; margin-bottom: 10px; }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="radio"] { margin-right: 10px; }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #45a049; }
+        .my-results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e7f3fe;
+            border: 1px solid #b6d4fe;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz de Infraestrutura Urbana</h1>
+
+    <form action="{{ url_for('submit') }}" method="post" enctype="multipart/form-data">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="sobrenome">Sobrenome:</label>
+        <input type="text" id="sobrenome" name="sobrenome" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        {% for question in questions %}
+            <fieldset>
+                <legend>{{ loop.index }}. {{ question.question }}</legend>
+                {% for option in question.options %}
+                    <label>
+                        <input type="radio" name="{{ question.name }}" value="{{ loop.index0 }}" required>
+                        {{ option }}
+                    </label>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+
+        <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
+        <textarea id="problem_description" name="problem_description" rows="4" required></textarea>
+
+        <label for="image">Envie uma imagem do problema (opcional):</label>
+        <input type="file" id="image" name="image" accept="image/*">
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div id="myresults" class="my-results">
+        Seus resultados aparecerão aqui
+    </div>
+</body>
+</html>
