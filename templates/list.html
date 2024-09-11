@@ -3,26 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Submissões</title>
+    <title>Lista de Submissões - Quiz de Infraestrutura Urbana</title>
     <style>
-        body {
+        body, html {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #1e3c72 0%, #1e3c72 1%, #2a5298 50%, #2ecc71 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            max-width: 800px;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 60px;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
         th {
-            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
         }
         .modal {
             display: none;
@@ -41,6 +81,9 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            color: #333;
         }
         .close {
             color: #aaa;
@@ -49,37 +92,53 @@
             font-weight: bold;
             cursor: pointer;
         }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1>Lista de Submissões</h1>
+    <div class="container">
+         <div class="logo-container">
+            <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
+        </div>
 
-    <table>
-        <tr>
-            <th>Nome</th>
-            <th>Sobrenome</th>
-            <th>Email</th>
-            <th>Total de Acertos</th>
-            <th>Problema</th>
-            <th>Imagem</th>
-        </tr>
-        {% for submission in submissions %}
-        <tr>
-            <td>{{ submission.nome }}</td>
-            <td>{{ submission.sobrenome }}</td>
-            <td>{{ submission.email }}</td>
-            <td>{{ submission.total_acertos }}</td>
-            <td>{{ submission.problema }}</td>
-            <td><a href="#" onclick="showImage('{{ url_for('uploaded_file', filename=submission.imagem) }}')">Ver Imagem</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+        <h1>Lista de Submissões</h1>
 
-    <div id="answerModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Respostas</h2>
-            <div id="answerContent"></div>
+        <div class="content-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Sobrenome</th>
+                        <th>Email</th>
+                        <th>Total de Acertos</th>
+                        <th>Problema</th>
+                        <th>Imagem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                    <tr>
+                        <td>{{ submission.nome }}</td>
+                        <td>{{ submission.sobrenome }}</td>
+                        <td>{{ submission.email }}</td>
+                        <td>{{ submission.total_acertos }}</td>
+                        <td>{{ submission.problema }}</td>
+                        <td>
+                            <a href="#" onclick="showImage('{{ url_for('uploaded_file', filename=submission.imagem) }}')" style="color: white;">Ver Imagem</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ url_for('index') }}" class="button">Voltar ao Início</a>
         </div>
     </div>
 
@@ -90,19 +149,24 @@
         </div>
     </div>
 
-    <p><a href="{{ url_for('index') }}">Voltar ao Início</a></p>
-
     <script>
         function showImage(url) {
-            document.getElementById('imagePreview').src = url;
-            document.getElementById('imageModal').style.display = 'block';
+            var modal = document.getElementById('imageModal');
+            var img = document.getElementById('imagePreview');
+            img.src = url;
+            modal.style.display = "block";
         }
 
-        // Close modal when clicking on close button or outside the modal
         window.onclick = function(event) {
-            if (event.target.className === 'modal' || event.target.className === 'close') {
-                event.target.closest('.modal').style.display = 'none';
+            var modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
+        }
+
+        var closeButton = document.getElementsByClassName("close")[0];
+        closeButton.onclick = function() {
+            document.getElementById('imageModal').style.display = "none";
         }
     </script>
 </body>

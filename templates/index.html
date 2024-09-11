@@ -23,10 +23,10 @@
             margin-bottom: 30px;
         }
         .logo {
-            max-width: 100px;
+            max-width: 60px;
             height: auto;
             background-color: rgba(255, 255, 255, 0.1);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -157,7 +157,7 @@
 
         <h1>Quiz de Infraestrutura Urbana</h1>
 
-        <form id="quizForm">
+        <form id="quizForm" enctype="multipart/form-data">
             <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" required>
 
@@ -181,13 +181,13 @@
             </div>
             {% endfor %}
 
-            <label for="problema">Descreva um problema de infraestrutura urbana em sua cidade:</label>
-            <textarea id="problema" name="problema" rows="4" required></textarea>
+            <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
+            <textarea id="problem_description" name="problem_description" rows="4" required></textarea>
 
-            <label for="imagem">Envie uma imagem do problema (obrigatório):</label>
+            <label for="image">Envie uma imagem do problema (obrigatório):</label>
             <div class="file-input-wrapper">
                 Escolher arquivo
-                <input type="file" id="imagem" name="imagem" accept="image/*" required>
+                <input type="file" id="image" name="image" accept="image/*" required>
             </div>
 
             <input type="submit" value="Enviar Respostas">
@@ -206,68 +206,58 @@
             <p>Suas respostas foram registradas com sucesso.</p>
         </div>
     </div>
-<script>
-        // Armazenar as questões e respostas corretas
-        const questions = [
-            {% for question in questions %}
-            {
-                name: "{{ question.name }}",
-                correctAnswer: {{ question.correct_answer }}
-            },
-            {% endfor %}
-        ];
 
-        const form = document.getElementById('quizForm');
-        const modal = document.getElementById('thankYouModal');
-        const closeBtn = document.getElementsByClassName('close')[0];
-        const resultsContainer = document.getElementById('myresults');
-        const quizResults = document.getElementById('quizResults');
-
-        form.addEventListener('submit', function(e) {
+    <script>
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Check if all questions are answered
-            const unansweredQuestions = document.querySelectorAll('.question').length - document.querySelectorAll('input[type="radio"]:checked').length;
-            if (unansweredQuestions > 0) {
-                alert(`Por favor, responda todas as ${unansweredQuestions} questões restantes.`);
-                return;
-            }
+            var formData = new FormData(this);
 
-            // Check if an image is uploaded
-            if (!document.getElementById('imagem').files.length) {
-                alert('Por favor, anexe uma imagem do problema.');
-                return;
-            }
-
-            // Show thank you modal
-            modal.style.display = "block";
+            fetch('{{ url_for("submit") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('thankYouModal').style.display = 'block';
+                    showResults();
+                } else {
+                    alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
+            });
         });
 
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
-            showResults();
+        document.getElementsByClassName('close')[0].onclick = function() {
+            document.getElementById('thankYouModal').style.display = 'none';
         }
 
         window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                showResults();
+            if (event.target == document.getElementById('thankYouModal')) {
+                document.getElementById('thankYouModal').style.display = 'none';
             }
         }
 
         function showResults() {
-            resultsContainer.style.display = "block";
+            var resultsContainer = document.getElementById('myresults');
+            var quizResults = document.getElementById('quizResults');
+            resultsContainer.style.display = 'block';
             quizResults.innerHTML = '';
 
-            let correctAnswers = 0;
+            var questions = {{ questions|tojson|safe }};
+            var correctAnswers = 0;
 
             questions.forEach((question, index) => {
-                const selectedAnswer = document.querySelector(`input[name="${question.name}"]:checked`);
-                const isCorrect = parseInt(selectedAnswer.value) === question.correctAnswer;
+                var selectedAnswer = document.querySelector(`input[name="${question.name}"]:checked`);
+                var isCorrect = parseInt(selectedAnswer.value) === question.correct_answer;
 
                 if (isCorrect) correctAnswers++;
 
-                const resultHtml = `
+                var resultHtml = `
                     <p>
                         <strong>Questão ${index + 1}:</strong>
                         ${isCorrect ?

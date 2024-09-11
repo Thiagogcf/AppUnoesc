@@ -95,6 +95,7 @@ def submit():
     answers = [request.form.get(f'q{i}', '') for i in range(len(quiz_questions))]
     problem_description = request.form['problem_description']
 
+    # Handle file upload
     if 'image' not in request.files:
         return 'No file uploaded', 400
     file = request.files['image']
@@ -102,20 +103,19 @@ def submit():
         return 'No file selected', 400
     if file:
         filename = secure_filename(f"{nome}_{sobrenome}_{file.filename}")
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
 
+    # Calculate correct answers
     correct_answers = [q['correct_answer'] for q in quiz_questions]
     total_correct = sum(1 for i, a in enumerate(answers) if a != '' and int(a) == correct_answers[i])
 
+    # Save to CSV
     with open('respostas.csv', 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([nome, sobrenome, email] + answers + [problem_description, filename, total_correct])
+        writer.writerow([nome, sobrenome, email] + answers + [problem_description, file_path, total_correct])
 
-    return redirect(url_for('thank_you'))
-
-@app.route('/thank_you')
-def thank_you():
-    return render_template('thank_you.html')
+    return jsonify({"success": True, "message": "Respostas registradas com sucesso!"})
 
 @app.route('/list')
 def list_submissions():
