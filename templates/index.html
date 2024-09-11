@@ -1,86 +1,270 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz de Infraestrutura Urbana</title>
     <style>
-        body {
+        body, html {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0 auto;
-            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #1e3c72 1%, #2a5298 50%, #2ecc71 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
             max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
-        h1 { color: #333; }
-        form {
-            background-color: #f4f4f4;
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 100px;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        label { display: block; margin-bottom: 10px; }
-        input[type="text"], input[type="email"], textarea {
-            width: 100%;
-            padding: 8px;
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 300;
+            font-size: 2.5em;
+        }
+        form {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
             margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            font-weight: 500;
         }
-        input[type="radio"] { margin-right: 10px; }
-        button {
-            background-color: #4CAF50;
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .question {
+            margin-bottom: 25px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        input[type="submit"] {
+            background-color: #2ecc71;
             color: white;
-            padding: 10px 15px;
+            padding: 14px 24px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            width: 100%;
         }
-        button:hover { background-color: #45a049; }
+        input[type="submit"]:hover {
+            background-color: #27ae60;
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-input-wrapper:hover {
+            background-color: #2980b9;
+        }
         .my-results {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #e7f3fe;
-            border: 1px solid #b6d4fe;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            color: #333;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h1>Quiz de Infraestrutura Urbana</h1>
+    <div class="container">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
+        </div>
 
-    <form action="{{ url_for('submit') }}" method="post" enctype="multipart/form-data">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
+        <h1>Quiz de Infraestrutura Urbana</h1>
 
-        <label for="sobrenome">Sobrenome:</label>
-        <input type="text" id="sobrenome" name="sobrenome" required>
+        <form id="quizForm">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+            <label for="sobrenome">Sobrenome:</label>
+            <input type="text" id="sobrenome" name="sobrenome" required>
 
-        {% for question in questions %}
-            <fieldset>
-                <legend>{{ loop.index }}. {{ question.question }}</legend>
-                {% for option in question.options %}
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            {% for question in questions %}
+            <div class="question">
+                <p><strong>{{ loop.index }}. {{ question.question }}</strong></p>
+                <div class="options">
+                    {% for option in question.options %}
                     <label>
                         <input type="radio" name="{{ question.name }}" value="{{ loop.index0 }}" required>
                         {{ option }}
                     </label>
-                {% endfor %}
-            </fieldset>
-        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
 
-        <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
-        <textarea id="problem_description" name="problem_description" rows="4" required></textarea>
+            <label for="problema">Descreva um problema de infraestrutura urbana em sua cidade:</label>
+            <textarea id="problema" name="problema" rows="4" required></textarea>
 
-        <label for="image">Envie uma imagem do problema (opcional):</label>
-        <input type="file" id="image" name="image" accept="image/*">
+            <label for="imagem">Envie uma imagem do problema (obrigatório):</label>
+            <div class="file-input-wrapper">
+                Escolher arquivo
+                <input type="file" id="imagem" name="imagem" accept="image/*" required>
+            </div>
 
-        <button type="submit">Enviar</button>
-    </form>
+            <input type="submit" value="Enviar Respostas">
+        </form>
 
-    <div id="myresults" class="my-results">
-        Seus resultados aparecerão aqui
+        <div id="myresults" class="my-results" style="display: none;">
+            <h2>Seus Resultados</h2>
+            <div id="quizResults"></div>
+        </div>
     </div>
+
+    <div id="thankYouModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Obrigado por Participar!</h2>
+            <p>Suas respostas foram registradas com sucesso.</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('quizForm');
+        const modal = document.getElementById('thankYouModal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        const resultsContainer = document.getElementById('myresults');
+        const quizResults = document.getElementById('quizResults');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Check if all questions are answered
+            const unansweredQuestions = document.querySelectorAll('.question').length - document.querySelectorAll('input[type="radio"]:checked').length;
+            if (unansweredQuestions > 0) {
+                alert(`Por favor, responda todas as ${unansweredQuestions} questões restantes.`);
+                return;
+            }
+
+            // Check if an image is uploaded
+            if (!document.getElementById('imagem').files.length) {
+                alert('Por favor, anexe uma imagem do problema.');
+                return;
+            }
+
+            // Show thank you modal
+            modal.style.display = "block";
+        });
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+            showResults();
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                showResults();
+            }
+        }
+
+        function showResults() {
+            resultsContainer.style.display = "block";
+            quizResults.innerHTML = '';
+
+            const questions = document.querySelectorAll('.question');
+            questions.forEach((question, index) => {
+                const selectedAnswer = question.querySelector('input[type="radio"]:checked');
+                const isCorrect = Math.random() < 0.5; // Simulating correct/incorrect answers
+                const resultHtml = `
+                    <p>
+                        <strong>Questão ${index + 1}:</strong>
+                        ${isCorrect ?
+                            '<span style="color: #2ecc71;">Correta</span>' :
+                            '<span style="color: #e74c3c;">Incorreta</span>'}
+                    </p>
+                `;
+                quizResults.innerHTML += resultHtml;
+            });
+        }
+    </script>
 </body>
 </html>
