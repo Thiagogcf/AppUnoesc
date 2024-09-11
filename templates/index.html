@@ -206,8 +206,17 @@
             <p>Suas respostas foram registradas com sucesso.</p>
         </div>
     </div>
+<script>
+        // Armazenar as questões e respostas corretas
+        const questions = [
+            {% for question in questions %}
+            {
+                name: "{{ question.name }}",
+                correctAnswer: {{ question.correct_answer }}
+            },
+            {% endfor %}
+        ];
 
-    <script>
         const form = document.getElementById('quizForm');
         const modal = document.getElementById('thankYouModal');
         const closeBtn = document.getElementsByClassName('close')[0];
@@ -250,10 +259,14 @@
             resultsContainer.style.display = "block";
             quizResults.innerHTML = '';
 
-            const questions = document.querySelectorAll('.question');
+            let correctAnswers = 0;
+
             questions.forEach((question, index) => {
-                const selectedAnswer = question.querySelector('input[type="radio"]:checked');
-                const isCorrect = Math.random() < 0.5; // Simulating correct/incorrect answers
+                const selectedAnswer = document.querySelector(`input[name="${question.name}"]:checked`);
+                const isCorrect = parseInt(selectedAnswer.value) === question.correctAnswer;
+
+                if (isCorrect) correctAnswers++;
+
                 const resultHtml = `
                     <p>
                         <strong>Questão ${index + 1}:</strong>
@@ -264,6 +277,8 @@
                 `;
                 quizResults.innerHTML += resultHtml;
             });
+
+            quizResults.innerHTML += `<p><strong>Total de acertos:</strong> ${correctAnswers} de ${questions.length}</p>`;
         }
     </script>
 </body>
