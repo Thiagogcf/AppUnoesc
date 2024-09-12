@@ -244,23 +244,27 @@
         }
 
         function filterTable(n) {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementsByClassName("filter-input")[n];
-            filter = input.value.toUpperCase();
-            table = document.getElementById("submissionsTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[n];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementsByClassName("filter-input")[n];
+    filter = input.value.toUpperCase();
+    table = document.getElementById("submissionsTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[n];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (n === 2) { // If filtering by telefone
+                txtValue = txtValue.replace(/\D/g, ''); // Remove non-numeric characters
+                filter = filter.replace(/\D/g, ''); // Remove non-numeric characters from filter
+            }
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
             }
         }
+    }
+}
     </script>
 </body>
 </html>

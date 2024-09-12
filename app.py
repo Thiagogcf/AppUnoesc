@@ -1,15 +1,18 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for
 import os
 import csv
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
+app.secret_key = os.urandom(24)  # Generate a random secret key
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 CORRECT_ANSWERS = [3, 1, 1, 3, 2, 1]
+ADMIN_PASSWORD = generate_password_hash('admin')
 
 
 @app.route('/')
@@ -26,6 +29,10 @@ def submit():
     answers = [int(request.form.get(f'q{i}', -1)) for i in range(6)]
     problem_description = request.form['problem_description']
     problem_solution = request.form['problem_solution']
+
+    # Check if the phone number has already been used
+    if check_duplicate_phone(telefone):
+        return jsonify({"success": False, "message": "Este número de telefone já foi utilizado." }), 400
 
     if 'image' not in request.files:
         return jsonify({"success": False, "message": "No file uploaded"}), 400
@@ -51,7 +58,9 @@ def submit():
     # Save to CSV
     with open('respostas.csv', 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([nome, sobrenome, telefone, escola] + answers + [problem_description, file_path,problem_solution, total_correct])
+        writer.writerow(
+            [nome, sobrenome, telefone, escola] + answers + [problem_description, file_path, problem_solution,
+                                                             total_correct])
 
     return jsonify({
         "success": True,
@@ -61,10 +70,35 @@ def submit():
     })
 
 
+def check_duplicate_phone(telefone):
+    try:
+        with open('respostas.csv', 'r', encoding='utf-8') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if row[2] == telefone:
+                    return True
+    except FileNotFoundError:
+        pass
+    return False
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        password = request.form['password']
+        if check_password_hash(ADMIN_PASSWORD, password):
+            session['logged_in'] = True
+            return redirect(url_for('list_submissions'))
+        else:
+            return render_template('login.html', error='Senha incorreta')
+    return render_template('login.html')
 
 
 @app.route('/list')
 def list_submissions():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
     submissions = []
     try:
         with open('respostas.csv', 'r', encoding='utf-8') as csvfile:
@@ -85,9 +119,16 @@ def list_submissions():
         pass
     return render_template('list.html', submissions=submissions)
 
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
