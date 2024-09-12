@@ -129,8 +129,8 @@
                         <td>{{ submission.total_acertos }}</td>
                         <td>{{ submission.problema }}</td>
                         <td>
-                            <a href="#" onclick="showImage('{{ url_for('uploaded_file', filename=submission.imagem) }}')" style="color: white;">Ver Imagem</a>
-                        </td>
+                            <a href="#" onclick="showImage('{{ url_for('uploaded_file', filename=submission.imagem.split('\\')[-1]) }}')" style="color: white;">Ver Imagem</a>
+                </td>
                     </tr>
                     {% endfor %}
                 </tbody>

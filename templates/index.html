@@ -155,8 +155,8 @@
             <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
         </div>
 
-        <h1>Quiz de Infraestrutura Urbana</h1>
-
+        <h1>Quiz da Engenharia Civil</h1>
+Infraestrutura urbana refere-se ao conjunto de serviços e sistemas essenciais que sustentam a vida nas cidades, incluindo redes de transporte, abastecimento de água, saneamento, energia, e gestão de resíduos sólidos. Esses componentes são fundamentais para o desenvolvimento econômico e social, bem como para a qualidade de vida dos habitantes urbanos. A infraestrutura urbana deve ser planejada e gerida de forma eficiente, sustentável e resiliente, considerando o crescimento populacional, a urbanização acelerada e as mudanças climáticas.
         <form id="quizForm" enctype="multipart/form-data">
             <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" required>
@@ -166,6 +166,10 @@
 
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
+
+        Teledone
+
+        escola
 
             {% for question in questions %}
             <div class="question">
@@ -189,6 +193,10 @@
                 Escolher arquivo
                 <input type="file" id="image" name="image" accept="image/*" required>
             </div>
+
+        <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
+
+            <textarea id="problem_description" name="problem_description" rows="4" required></textarea>
 
             <input type="submit" value="Enviar Respostas">
         </form>
