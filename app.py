@@ -12,13 +12,11 @@ app.secret_key = os.urandom(24)  # Generate a random secret key
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 CORRECT_ANSWERS = [3, 1, 1, 3, 2, 1]
-ADMIN_PASSWORD = generate_password_hash('admin')
-
+ADMIN_PASSWORD = generate_password_hash('your_secure_password_here')
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -32,13 +30,16 @@ def submit():
 
     # Check if the phone number has already been used
     if check_duplicate_phone(telefone):
-        return jsonify({"success": False, "message": "Este número de telefone já foi utilizado." }), 400
+        return jsonify({
+            "success": False,
+            "message": "Este número de telefone já foi utilizado. Por favor, use um número diferente."
+        }), 400
 
     if 'image' not in request.files:
-        return jsonify({"success": False, "message": "No file uploaded"}), 400
+        return jsonify({"success": False, "message": "Nenhum arquivo foi enviado."}), 400
     file = request.files['image']
     if file.filename == '':
-        return jsonify({"success": False, "message": "No file selected"}), 400
+        return jsonify({"success": False, "message": "Nenhum arquivo foi selecionado."}), 400
 
     if file:
         filename = secure_filename(f"{nome}_{sobrenome}_{file.filename}")
@@ -58,9 +59,7 @@ def submit():
     # Save to CSV
     with open('respostas.csv', 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(
-            [nome, sobrenome, telefone, escola] + answers + [problem_description, file_path, problem_solution,
-                                                             total_correct])
+        writer.writerow([nome, sobrenome, telefone, escola] + answers + [problem_description, file_path, problem_solution, total_correct])
 
     return jsonify({
         "success": True,
@@ -69,6 +68,7 @@ def submit():
         "respostas": respostas_detalhadas
     })
 
+# ... (rest of the code remains the same)
 
 def check_duplicate_phone(telefone):
     try:

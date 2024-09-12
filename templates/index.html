@@ -178,7 +178,7 @@
             margin-top: 0;
         }
 
-         #resultados {
+        #resultados {
             background-color: rgba(255, 255, 255, 0.1);
             margin-top: 20px;
             padding: 20px;
@@ -210,17 +210,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             var SPMaskBehavior = function (val) {
-                return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
-            },
-            spOptions = {
-                onKeyPress: function(val, e, field, options) {
-                    field.mask(SPMaskBehavior.apply({}, arguments), options);
-                }
-            };
+                    return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+                },
+                spOptions = {
+                    onKeyPress: function (val, e, field, options) {
+                        field.mask(SPMaskBehavior.apply({}, arguments), options);
+                    }
+                };
 
             $('#telefone').mask(SPMaskBehavior, spOptions);
+
+            $('form').submit(function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '/submit',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            $('#thankYouModal').show();
+                            updateResults(response.total_acertos, response.respostas);
+                        } else {
+                            alert(response.message || "Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : "Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.";
+                        alert(errorMessage);
+                    }
+                });
+            });
         });
     </script>
     <div class="div-conteudo">
@@ -263,11 +290,11 @@
 
             <div class="question">
                 <p>A pavimentação urbana é essencial para garantir a mobilidade segura e eficiente nas
-                cidades. Ela
-                abrange o projeto e a execução de vias, calçadas e ciclovias, utilizando materiais como asfalto,
-                concreto e blocos intertravados. Além de proporcionar conforto e segurança aos usuários, a
-                pavimentação influencia diretamente na durabilidade das vias e na redução dos custos de
-                manutenção.</p>
+                    cidades. Ela
+                    abrange o projeto e a execução de vias, calçadas e ciclovias, utilizando materiais como asfalto,
+                    concreto e blocos intertravados. Além de proporcionar conforto e segurança aos usuários, a
+                    pavimentação influencia diretamente na durabilidade das vias e na redução dos custos de
+                    manutenção.</p>
                 <p><strong>2. Qual é o principal fator a ser considerado no dimensionamento de uma pavimentação
                     asfáltica urbana?</strong></p>
                 <div class="options">
@@ -364,7 +391,7 @@
 </div>
 
 <div id="thankYouModal" class="modal">
-   <div class="modal-content">
+    <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Obrigado por Participar!</h2>
         <p>Suas respostas foram registradas com sucesso.</p>
@@ -373,29 +400,7 @@
 </div>
 
 <script>
-   document.getElementById('quizForm').addEventListener('submit', function (e) {
-        e.preventDefault();
 
-        var formData = new FormData(this);
-
-        fetch('/submit', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('thankYouModal').style.display = 'block';
-                mostrarResultados(data);
-            } else {
-                alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
-        });
-    });
 
     function mostrarResultados(data) {
         const resultadosDiv = document.getElementById('resultados');
