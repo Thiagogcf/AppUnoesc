@@ -13,15 +13,18 @@
             padding: 0;
             min-height: 100vh;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
         }
+
         .logo-container {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .logo {
             max-width: 60px;
             height: auto;
@@ -30,23 +33,21 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-weight: 300;
             font-size: 2.5em;
         }
-        form {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+
+
         label {
             display: block;
             margin-bottom: 10px;
             font-weight: 500;
         }
+
         input[type="text"],
         input[type="email"],
         textarea {
@@ -60,17 +61,25 @@
             font-size: 16px;
             box-sizing: border-box;
         }
+
         .question {
-            margin-bottom: 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .options label {
             display: block;
             margin-bottom: 10px;
             cursor: pointer;
         }
+
         .options input[type="radio"] {
             margin-right: 10px;
         }
+
         input[type="submit"] {
             background-color: #2ecc71;
             color: white;
@@ -82,9 +91,11 @@
             transition: background-color 0.3s ease;
             width: 100%;
         }
+
         input[type="submit"]:hover {
             background-color: #27ae60;
         }
+
         .file-input-wrapper {
             position: relative;
             overflow: hidden;
@@ -96,6 +107,7 @@
             cursor: pointer;
             margin-bottom: 20px;
         }
+
         .file-input-wrapper input[type=file] {
             font-size: 100px;
             position: absolute;
@@ -104,9 +116,11 @@
             opacity: 0;
             cursor: pointer;
         }
+
         .file-input-wrapper:hover {
             background-color: #2980b9;
         }
+
         .my-results {
             margin-top: 20px;
             padding: 20px;
@@ -114,6 +128,7 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -123,8 +138,9 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.4);
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
@@ -135,149 +151,273 @@
             border-radius: 8px;
             color: #333;
         }
+
         .close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
+
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
         }
+
+        .div-conteudo {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+         #resultados {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        #resultados h2 {
+            margin-top: 0;
+        }
+
+        .correct {
+            color: lightgreen;
+        }
+
+        .incorrect {
+            color: lightcoral;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
-        </div>
+<div class="container">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
+    </div>
 
-        <h1>Quiz da Engenharia Civil</h1>
-Infraestrutura urbana refere-se ao conjunto de serviços e sistemas essenciais que sustentam a vida nas cidades, incluindo redes de transporte, abastecimento de água, saneamento, energia, e gestão de resíduos sólidos. Esses componentes são fundamentais para o desenvolvimento econômico e social, bem como para a qualidade de vida dos habitantes urbanos. A infraestrutura urbana deve ser planejada e gerida de forma eficiente, sustentável e resiliente, considerando o crescimento populacional, a urbanização acelerada e as mudanças climáticas.
-        <form id="quizForm" enctype="multipart/form-data">
+    <h1>Quiz da Engenharia Civil</h1>
+    <div class="div-conteudo">
+
+        <h2>Quiz de Infraestrutura Urbana</h2>
+        <p>Infraestrutura urbana refere-se ao conjunto de serviços e sistemas essenciais que sustentam a vida nas
+            cidades, incluindo redes de transporte, abastecimento de água, saneamento, energia, e gestão de resíduos
+            sólidos. Esses componentes são fundamentais para o desenvolvimento econômico e social, bem como para a
+            qualidade de vida dos habitantes urbanos. A infraestrutura urbana deve ser planejada e gerida de forma
+            eficiente, sustentável e resiliente, considerando o crescimento populacional, a urbanização acelerada e as
+            mudanças climáticas.</p>
+    </div>
+    <form id="quizForm" action="/submit" method="post" enctype="multipart/form-data">
+        <div class="question">
+            <h2>Informações Pessoais</h2>
+
             <label for="nome">Nome:</label>
             <input type="text" id="nome" name="nome" required>
 
             <label for="sobrenome">Sobrenome:</label>
             <input type="text" id="sobrenome" name="sobrenome" required>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" name="telefone" required>
 
-        Teledone
+            <label for="escola">Escola:</label>
+            <input type="text" id="escola" name="escola" required>
+        </div>
 
-        escola
-
-            {% for question in questions %}
+        <div id="questions">
             <div class="question">
-                <p><strong>{{ loop.index }}. {{ question.question }}</strong></p>
+                <p><strong>1. Qual dos seguintes componentes NÃO faz parte da infraestrutura urbana?</strong></p>
                 <div class="options">
-                    {% for option in question.options %}
-                    <label>
-                        <input type="radio" name="{{ question.name }}" value="{{ loop.index0 }}" required>
-                        {{ option }}
-                    </label>
-                    {% endfor %}
+                    <label><input type="radio" name="q0" value="0" required> Rede de transporte público</label>
+                    <label><input type="radio" name="q0" value="1" required> Abastecimento de água</label>
+                    <label><input type="radio" name="q0" value="2" required> Energia elétrica</label>
+                    <label><input type="radio" name="q0" value="3" required> Produção agrícola rural</label>
                 </div>
             </div>
-            {% endfor %}
 
+            <div class="question">
+                <p>A pavimentação urbana é essencial para garantir a mobilidade segura e eficiente nas
+                cidades. Ela
+                abrange o projeto e a execução de vias, calçadas e ciclovias, utilizando materiais como asfalto,
+                concreto e blocos intertravados. Além de proporcionar conforto e segurança aos usuários, a
+                pavimentação influencia diretamente na durabilidade das vias e na redução dos custos de
+                manutenção.</p>
+                <p><strong>2. Qual é o principal fator a ser considerado no dimensionamento de uma pavimentação
+                    asfáltica urbana?</strong></p>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="0" required> Cor da pavimentação</label>
+                    <label><input type="radio" name="q1" value="1" required> Carga dos veículos que utilizarão a
+                        via</label>
+                    <label><input type="radio" name="q1" value="2" required> Proximidade de áreas verdes</label>
+                    <label><input type="radio" name="q1" value="3" required> Tipo de iluminação pública</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>Estruturas de contenção são utilizadas em áreas urbanas para estabilizar taludes e encostas,
+                    prevenindo deslizamentos de terra e erosões. Esses sistemas incluem muros de arrimo, gabiões e
+                    cortinas atirantadas, entre outros, e são projetados para resistir às forças exercidas pelo solo e
+                    pela água, garantindo a segurança das construções adjacentes.</p>
+                <p><strong>3. Qual é a principal função de uma estrutura de contenção em áreas urbanas?</strong></p>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="0" required> Melhorar a estética da paisagem</label>
+                    <label><input type="radio" name="q2" value="1" required> Controlar a erosão e deslizamentos de terra</label>
+                    <label><input type="radio" name="q2" value="2" required> Aumentar o valor imobiliário</label>
+                    <label><input type="radio" name="q2" value="3" required> Facilitar o plantio de vegetação</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>O saneamento básico é um dos pilares da infraestrutura urbana, abrangendo o abastecimento de água
+                    potável, a coleta e tratamento de esgoto, e a gestão de resíduos sólidos. A eficiência do sistema de
+                    saneamento impacta diretamente a saúde pública, prevenindo doenças e promovendo a qualidade de vida
+                    da população.</p>
+                <p><strong>4. Qual dos seguintes elementos NÃO faz parte de um sistema de saneamento básico?</strong>
+                </p>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="0" required> Tratamento de esgoto</label>
+                    <label><input type="radio" name="q3" value="1" required> Abastecimento de água</label>
+                    <label><input type="radio" name="q3" value="2" required> Coleta de resíduos sólidos</label>
+                    <label><input type="radio" name="q3" value="3" required> Produção de energia elétrica</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>Praças e parques urbanos são espaços públicos essenciais para o bem-estar das comunidades, oferecendo
+                    áreas de lazer, convívio social, e contato com a natureza. Esses espaços verdes contribuem para a
+                    qualidade ambiental das cidades, auxiliando na regulação do clima, na filtragem do ar e na promoção
+                    da biodiversidade.</p>
+                <p><strong>5. Qual é a principal função de parques urbanos em áreas densamente povoadas?</strong></p>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="0" required> Aumentar a área construída</label>
+                    <label><input type="radio" name="q4" value="1" required> Gerar receita para o município</label>
+                    <label><input type="radio" name="q4" value="2" required> Proporcionar áreas de lazer e promover a
+                        qualidade ambiental</label>
+                    <label><input type="radio" name="q4" value="3" required> Substituir áreas comerciais</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>A iluminação pública é fundamental para garantir a segurança e a mobilidade nas áreas urbanas durante
+                    a noite. Além de melhorar a visibilidade para motoristas e pedestres, a iluminação pública adequada
+                    contribui para a prevenção de crimes e a valorização dos espaços públicos.</p>
+                <p><strong>6. Qual é o principal benefício da implementação de iluminação pública LED nas
+                    cidades?</strong></p>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="0" required> Aumento do consumo de energia</label>
+                    <label><input type="radio" name="q5" value="1" required> Redução dos custos de manutenção e consumo
+                        de energia</label>
+                    <label><input type="radio" name="q5" value="2" required> Melhoria na estética da cidade durante o
+                        dia</label>
+                    <label><input type="radio" name="q5" value="3" required> Aumento do número de postes
+                        necessários</label>
+                </div>
+            </div>
+        </div>
+        <div class="div-conteudo">
             <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
-            <textarea id="problem_description" name="problem_description" rows="4" required></textarea>
+            <textarea id="problem_description" name="problem_description" required></textarea>
 
             <label for="image">Envie uma imagem do problema (obrigatório):</label>
             <div class="file-input-wrapper">
-                Escolher arquivo
                 <input type="file" id="image" name="image" accept="image/*" required>
+                <span>Escolher arquivo</span>
             </div>
-
-        <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
-
-            <textarea id="problem_description" name="problem_description" rows="4" required></textarea>
-
-            <input type="submit" value="Enviar Respostas">
-        </form>
-
-        <div id="myresults" class="my-results" style="display: none;">
-            <h2>Seus Resultados</h2>
-            <div id="quizResults"></div>
+            <label for="problem_solution">Descreva uma possível solução para o problema:</label>
+            <textarea id="problem_solution" name="problem_solution" required></textarea>
         </div>
+
+        <input type="submit" value="Enviar Respostas">
+    </form>
+
+    <div id="resultados">
+        <h2>Seus Resultados</h2>
+        <p>Total de acertos: <span id="totalAcertos"></span></p>
+        <div id="detalhesRespostas"></div>
     </div>
+</div>
 
-    <div id="thankYouModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Obrigado por Participar!</h2>
-            <p>Suas respostas foram registradas com sucesso.</p>
-        </div>
+<div id="thankYouModal" class="modal">
+   <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Obrigado por Participar!</h2>
+        <p>Suas respostas foram registradas com sucesso.</p>
+        <p>Feche esta janela para ver seus resultados.</p>
     </div>
+</div>
 
-    <script>
-        document.getElementById('quizForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+<script>
+   document.getElementById('quizForm').addEventListener('submit', function (e) {
+        e.preventDefault();
 
-            var formData = new FormData(this);
+        var formData = new FormData(this);
 
-            fetch('{{ url_for("submit") }}', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('thankYouModal').style.display = 'block';
-                    showResults();
-                } else {
-                    alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        fetch('/submit', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('thankYouModal').style.display = 'block';
+                mostrarResultados(data);
+            } else {
                 alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
-            });
-        });
-
-        document.getElementsByClassName('close')[0].onclick = function() {
-            document.getElementById('thankYouModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('thankYouModal')) {
-                document.getElementById('thankYouModal').style.display = 'none';
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
+        });
+    });
+
+    function mostrarResultados(data) {
+        const resultadosDiv = document.getElementById('resultados');
+        const totalAcertosSpan = document.getElementById('totalAcertos');
+        const detalhesRespostasDiv = document.getElementById('detalhesRespostas');
+
+        totalAcertosSpan.textContent = data.total_acertos;
+
+        let detalhesHTML = '';
+        for (let i = 0; i < data.respostas.length; i++) {
+            const resposta = data.respostas[i];
+            const classe = resposta.correta ? 'correct' : 'incorrect';
+            detalhesHTML += `
+                <p class="${classe}">
+                    Questão ${i + 1}: ${resposta.correta ? 'Correta' : 'Incorreta'}
+                    ${!resposta.correta ? ` (Resposta correta: ${resposta.resposta_correta})` : ''}
+                </p>
+            `;
         }
+        detalhesRespostasDiv.innerHTML = detalhesHTML;
 
-        function showResults() {
-            var resultsContainer = document.getElementById('myresults');
-            var quizResults = document.getElementById('quizResults');
-            resultsContainer.style.display = 'block';
-            quizResults.innerHTML = '';
+        resultadosDiv.style.display = 'block';
+    }
 
-            var questions = {{ questions|tojson|safe }};
-            var correctAnswers = 0;
+    document.querySelector('.close').addEventListener('click', function () {
+        document.getElementById('thankYouModal').style.display = 'none';
+    });
 
-            questions.forEach((question, index) => {
-                var selectedAnswer = document.querySelector(`input[name="${question.name}"]:checked`);
-                var isCorrect = parseInt(selectedAnswer.value) === question.correct_answer;
-
-                if (isCorrect) correctAnswers++;
-
-                var resultHtml = `
-                    <p>
-                        <strong>Questão ${index + 1}:</strong>
-                        ${isCorrect ?
-                            '<span style="color: #2ecc71;">Correta</span>' :
-                            '<span style="color: #e74c3c;">Incorreta</span>'}
-                    </p>
-                `;
-                quizResults.innerHTML += resultHtml;
-            });
-
-            quizResults.innerHTML += `<p><strong>Total de acertos:</strong> ${correctAnswers} de ${questions.length}</p>`;
+    window.onclick = function (event) {
+        var modal = document.getElementById('thankYouModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
-    </script>
+    }
+
+    document.getElementById('image').addEventListener('change', function () {
+        var fileName = this.files[0].name;
+        this.nextElementSibling.textContent = fileName;
+    });
+</script>
 </body>
 </html>
