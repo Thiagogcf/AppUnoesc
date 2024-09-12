@@ -12,7 +12,7 @@ app.secret_key = os.urandom(24)  # Generate a random secret key
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 CORRECT_ANSWERS = [3, 1, 1, 3, 2, 1]
-ADMIN_PASSWORD = generate_password_hash('your_secure_password_here')
+ADMIN_PASSWORD = generate_password_hash('admin')
 
 @app.route('/')
 def index():

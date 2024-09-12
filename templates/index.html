@@ -19,7 +19,6 @@
             margin: 0 auto;
             padding: 40px 20px;
         }
-
         .logo-container {
             text-align: center;
             margin-bottom: 30px;
@@ -210,44 +209,64 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script>
-        $(document).ready(function () {
-            var SPMaskBehavior = function (val) {
-                    return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
-                },
-                spOptions = {
-                    onKeyPress: function (val, e, field, options) {
-                        field.mask(SPMaskBehavior.apply({}, arguments), options);
+        document.getElementById('quizForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('/submit', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide the form
+                        document.getElementById('quizForm').style.display = 'none';
+
+                        // Show the results
+                        var resultadosDiv = document.getElementById('resultados');
+                        resultadosDiv.style.display = 'block';
+
+                        // Update total correct answers
+                        document.getElementById('totalAcertos').textContent = data.total_acertos;
+
+                        // Display detailed results
+                        var detalhesRespostas = document.getElementById('detalhesRespostas');
+                        detalhesRespostas.innerHTML = '';
+                        data.respostas.forEach((resposta, index) => {
+                            var p = document.createElement('p');
+                            p.textContent = `Questão ${index + 1}: ${resposta.correta ? 'Correta' : 'Incorreta'}`;
+                            if (!resposta.correta) {
+                                p.textContent += ` (Resposta correta: ${resposta.resposta_correta})`;
+                            }
+                            detalhesRespostas.appendChild(p);
+                        });
+
+                        // Show the thank you modal
+                        document.getElementById('thankYouModal').style.display = 'block';
+                    } else {
+                        // Display error message
+                        alert(data.message || 'Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
                     }
-                };
-
-            $('#telefone').mask(SPMaskBehavior, spOptions);
-
-            $('form').submit(function (e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-
-                $.ajax({
-                    url: '/submit',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        if (response.success) {
-                            $('#thankYouModal').show();
-                            updateResults(response.total_acertos, response.respostas);
-                        } else {
-                            alert(response.message || "Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        var errorMessage = xhr.responseJSON && xhr.responseJSON.message
-                            ? xhr.responseJSON.message
-                            : "Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.";
-                        alert(errorMessage);
-                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.');
                 });
-            });
+        });
+
+        // Close the modal when clicking the close button
+        document.querySelector('.close').addEventListener('click', function () {
+            document.getElementById('thankYouModal').style.display = 'none';
+        });
+
+        // Close the modal when clicking outside of it
+        window.addEventListener('click', function (event) {
+            var modal = document.getElementById('thankYouModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
         });
     </script>
     <div class="div-conteudo">
@@ -401,44 +420,81 @@
 
 <script>
 
-
-    function mostrarResultados(data) {
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('quizForm');
+        const modal = document.getElementById('thankYouModal');
+        const closeBtn = document.querySelector('.close');
         const resultadosDiv = document.getElementById('resultados');
         const totalAcertosSpan = document.getElementById('totalAcertos');
         const detalhesRespostasDiv = document.getElementById('detalhesRespostas');
 
-        totalAcertosSpan.textContent = data.total_acertos;
+        // Event listener for form submission
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
 
-        let detalhesHTML = '';
-        for (let i = 0; i < data.respostas.length; i++) {
-            const resposta = data.respostas[i];
-            const classe = resposta.correta ? 'correct' : 'incorrect';
-            detalhesHTML += `
-                <p class="${classe}">
-                    Questão ${i + 1}: ${resposta.correta ? 'Correta' : 'Incorreta'}
-                    ${!resposta.correta ? ` (Resposta correta: ${resposta.resposta_correta})` : ''}
-                </p>
-            `;
-        }
-        detalhesRespostasDiv.innerHTML = detalhesHTML;
+            // Disable the form inputs (readonly mode)
+            Array.from(form.elements).forEach((element) => {
+                element.disabled = true;
+            });
 
-        resultadosDiv.style.display = 'block';
-    }
+            // Send the form data via AJAX
+            fetch('/submit', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show the thank you modal
+                        modal.style.display = 'block';
+                        // Update the results once the modal is closed
+                        updateResults(data.total_acertos, data.respostas);
+                    } else {
+                        alert(data.message || "Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert("Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.");
+                });
+        });
 
-    document.querySelector('.close').addEventListener('click', function () {
-        document.getElementById('thankYouModal').style.display = 'none';
-    });
-
-    window.onclick = function (event) {
-        var modal = document.getElementById('thankYouModal');
-        if (event.target == modal) {
+        // Close modal and show results
+        closeBtn.onclick = function () {
             modal.style.display = "none";
-        }
-    }
+            resultadosDiv.style.display = 'block';
+        };
 
-    document.getElementById('image').addEventListener('change', function () {
-        var fileName = this.files[0].name;
-        this.nextElementSibling.textContent = fileName;
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+                resultadosDiv.style.display = 'block';
+            }
+        };
+
+        // Function to update the results section
+        function updateResults(totalAcertos, respostas) {
+            totalAcertosSpan.textContent = totalAcertos;
+
+            let detalhesHTML = '';
+            respostas.forEach((resposta, index) => {
+                const classe = resposta.correta ? 'correct' : 'incorrect';
+                detalhesHTML += `
+                    <p class="${classe}">
+                        Questão ${index + 1}: ${resposta.correta ? 'Correta' : 'Incorreta'}
+                        ${!resposta.correta ? ` (Resposta correta: ${resposta.resposta_correta})` : ''}
+                    </p>
+                `;
+            });
+            detalhesRespostasDiv.innerHTML = detalhesHTML;
+        }
+
+        // Update file input label when a file is selected
+        document.getElementById('image').addEventListener('change', function () {
+            var fileName = this.files[0].name;
+            this.nextElementSibling.textContent = fileName;
+        });
     });
 </script>
 </body>
