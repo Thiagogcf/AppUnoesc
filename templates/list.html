@@ -13,15 +13,18 @@
             padding: 0;
             min-height: 100vh;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .logo-container {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .logo {
             max-width: 60px;
             height: auto;
@@ -30,32 +33,39 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .content-box {
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         th {
             font-weight: bold;
             cursor: pointer;
         }
+
         th:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
+
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -66,9 +76,11 @@
             transition: background-color 0.3s;
             margin-top: 20px;
         }
+
         .button:hover {
             background-color: #45a049;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -78,8 +90,9 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.4);
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
@@ -90,6 +103,7 @@
             border-radius: 10px;
             color: #333;
         }
+
         .close {
             color: #aaa;
             float: right;
@@ -97,12 +111,14 @@
             font-weight: bold;
             cursor: pointer;
         }
+
         .close:hover,
         .close:focus {
             color: #000;
             text-decoration: none;
             cursor: pointer;
         }
+
         .botao-modal {
             padding: 5px 10px;
             background-color: #4CAF50;
@@ -112,9 +128,11 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .botao-modal:hover {
             background-color: #45a049;
         }
+
         .filter-input {
             width: 80%;
             padding: 5px;
@@ -126,46 +144,95 @@
             color: #ffffff;
 
         }
+
         ::placeholder {
             color: #ccc;
         }
+
+        .filter-input {
+            width: 80%;
+            padding: 5px;
+            margin-top: 5px;
+            margin-bottom: 2px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        @media print {
+            .filter-input, .button, .botao-modal {
+                display: none;
+            }
+            body {
+                background: none;
+                color: #000;
+            }
+            .content-box {
+                background: none;
+            }
+            th, td {
+                border-bottom: 1px solid #000;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-         <div class="logo-container">
-            <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
-        </div>
+<div class="container">
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='Logo-Unoesc-colorido.png') }}" alt="Logo" class="logo">
+    </div>
 
-        <h1>Lista de Submissões</h1>
+    <h1>Lista de Submissões</h1>
 
-        <div class="content-box">
-            <table id="submissionsTable">
-            <thead>
-                <tr>
-                    <th> <a onclick="sortTable(0)">Nome ↕</a> <input type="text" class="filter-input" onkeyup="filterTable(0)" placeholder="Filtrar nome..."></th>
-                    <th><a onclick="sortTable(1)">Sobrenome ↕</a> <input type="text" class="filter-input" onkeyup="filterTable(1)" placeholder="Filtrar sobrenome..."></th>
-                    <th><a onclick="sortTable(2)">Telefone ↕</a> <input type="text" class="filter-input" onkeyup="filterTable(2)" placeholder="Filtrar telefone..."></th>
-                    <th><a onclick="sortTable(3)">Escola ↕</a> <input type="text" class="filter-input" onkeyup="filterTable(3)" placeholder="Filtrar escola..."></th>
-                    <th onclick="sortTable(4)">Acertos ↕</th>
-                    <th>Detalhes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for submission in submissions %}
-                <tr>
-                    <td>{{ submission.nome }}</td>
-                    <td>{{ submission.sobrenome }}</td>
-                    <td>{{ submission.telefone }}</td>
-                    <td>{{ submission.escola }}</td>
-                    <td>{{ submission.total_acertos }}</td>
-                    <td>
-                        <button class="botao-modal" onclick="showModal('{{ submission.problema }}', '{{ url_for('uploaded_file', filename=submission.imagem.split('\\')[-1]) }}', '{{ submission.solucao }}')">Ver Detalhes</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="content-box">
+    <div>
+        <button class="button" style="float: right; box-shadow: 0 0; border: none" onclick="window.print()">
+            Imprimir
+        </button>
+    </div>
+        <table id="submissionsTable">
+        <thead>
+        <tr>
+            <th>
+                Nome
+                <input type="text" class="filter-input" onkeyup="filterTable(0)" placeholder="Filtrar nome...">
+            </th>
+            <th>
+                Sobrenome
+                <input type="text" class="filter-input" onkeyup="filterTable(1)" placeholder="Filtrar sobrenome...">
+            </th>
+            <th>
+                Telefone
+                <input type="text" class="filter-input" onkeyup="filterTable(2)" placeholder="Filtrar telefone...">
+            </th>
+            <th>
+                Escola
+                <input type="text" class="filter-input" onkeyup="filterTable(3)" placeholder="Filtrar escola...">
+            </th>
+            <th>Acertos</th>
+            <th>Detalhes</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for submission in submissions %}
+            <tr>
+                <td>{{ submission.nome }}</td>
+                <td>{{ submission.sobrenome }}</td>
+                <td>{{ submission.telefone }}</td>
+                <td>{{ submission.escola }}</td>
+                <td>{{ submission.total_acertos }}</td>
+                <td>
+                    <button class="botao-modal"
+                            onclick="showModal('{{ submission.problema }}', '{{ url_for('uploaded_file', filename=submission.imagem.split('\\')[-1]) }}', '{{ submission.solucao }}')">
+                        Ver Detalhes
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
         <div style="text-align: center;">
             <a href="{{ url_for('index') }}" class="button">Voltar ao Início</a>
@@ -190,18 +257,21 @@
         var span = document.getElementsByClassName("close")[0];
 
         function showModal(problem, imageSrc, solution) {
+            console.log(imageSrc);
+            console.log(solution);
+            console.log(problem);
             document.getElementById("modalProblem").textContent = problem;
             document.getElementById("modalImage").src = imageSrc;
             document.getElementById("modalSolution").textContent = solution;
             modal.style.display = "block";
         }
 
-        span.onclick = function() {
+        span.onclick = function () {
             modal.style.display = "none";
         }
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
+        window.onclick = function (event) {
+            if (event.target === modal) {
                 modal.style.display = "none";
             }
         }
@@ -218,12 +288,12 @@
                     shouldSwitch = false;
                     x = rows[i].getElementsByTagName("TD")[n];
                     y = rows[i + 1].getElementsByTagName("TD")[n];
-                    if (dir == "asc") {
+                    if (dir === "asc") {
                         if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                             shouldSwitch = true;
                             break;
                         }
-                    } else if (dir == "desc") {
+                    } else if (dir === "desc") {
                         if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
                             shouldSwitch = true;
                             break;
@@ -235,7 +305,7 @@
                     switching = true;
                     switchcount++;
                 } else {
-                    if (switchcount == 0 && dir == "asc") {
+                    if (switchcount === 0 && dir === "asc") {
                         dir = "desc";
                         switching = true;
                     }
@@ -244,27 +314,27 @@
         }
 
         function filterTable(n) {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementsByClassName("filter-input")[n];
-    filter = input.value.toUpperCase();
-    table = document.getElementById("submissionsTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[n];
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (n === 2) { // If filtering by telefone
-                txtValue = txtValue.replace(/\D/g, ''); // Remove non-numeric characters
-                filter = filter.replace(/\D/g, ''); // Remove non-numeric characters from filter
-            }
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementsByClassName("filter-input")[n];
+            filter = input.value.toUpperCase();
+            table = document.getElementById("submissionsTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[n];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (n === 2) { // If filtering by telefone
+                        txtValue = txtValue.replace(/\D/g, ''); // Remove non-numeric characters
+                        filter = filter.replace(/\D/g, ''); // Remove non-numeric characters from filter
+                    }
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
             }
         }
-    }
-}
     </script>
 </body>
 </html>

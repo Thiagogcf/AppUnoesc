@@ -19,6 +19,7 @@
             margin: 0 auto;
             padding: 40px 20px;
         }
+
         .logo-container {
             text-align: center;
             margin-bottom: 30px;
@@ -264,7 +265,7 @@
         // Close the modal when clicking outside of it
         window.addEventListener('click', function (event) {
             var modal = document.getElementById('thankYouModal');
-            if (event.target == modal) {
+            if (event.target === modal) {
                 modal.style.display = 'none';
             }
         });
@@ -388,7 +389,7 @@
         </div>
         <div class="div-conteudo">
             <label for="problem_description">Descreva um problema de infraestrutura urbana em sua cidade:</label>
-            <textarea id="problem_description" name="problem_description" required></textarea>
+            <textarea id="problem_description" name="problem_description" required onkeypress="return event.keyCode !== 13;"></textarea>
 
             <label for="image">Envie uma imagem do problema (obrigatório):</label>
             <div class="file-input-wrapper">
@@ -396,7 +397,7 @@
                 <span>Escolher arquivo</span>
             </div>
             <label for="problem_solution">Descreva uma possível solução para o problema:</label>
-            <textarea id="problem_solution" name="problem_solution" required></textarea>
+            <textarea id="problem_solution" name="problem_solution" required onkeypress="return event.keyCode !== 13;"></textarea>
         </div>
 
         <input type="submit" value="Enviar Respostas">
@@ -427,7 +428,18 @@
         const resultadosDiv = document.getElementById('resultados');
         const totalAcertosSpan = document.getElementById('totalAcertos');
         const detalhesRespostasDiv = document.getElementById('detalhesRespostas');
+        $(document).ready(function () {
+            var SPMaskBehavior = function (val) {
+                    return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+                },
+                spOptions = {
+                    onKeyPress: function (val, e, field, options) {
+                        field.mask(SPMaskBehavior.apply({}, arguments), options);
+                    }
+                };
 
+            $('#telefone').mask(SPMaskBehavior, spOptions);
+        });
         // Event listener for form submission
         form.addEventListener('submit', function (e) {
             e.preventDefault();
