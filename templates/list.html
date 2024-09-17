@@ -164,13 +164,16 @@
             .filter-input, .button, .botao-modal {
                 display: none;
             }
+
             body {
                 background: none;
                 color: #000;
             }
+
             .content-box {
                 background: none;
             }
+
             th, td {
                 border-bottom: 1px solid #000;
             }
@@ -187,52 +190,51 @@
     <h1>Lista de Submissões</h1>
 
     <div class="content-box">
-    <div>
-        <button class="button" style="float: right; box-shadow: 0 0; border: none" onclick="window.print()">
-            Imprimir
-        </button>
-    </div>
+        <div>
+            <button class="button" style="float: right; box-shadow: 0 0; border: none" onclick="window.print()">
+                Imprimir
+            </button>
+        </div>
         <table id="submissionsTable">
-        <thead>
-        <tr>
-            <th>
-                Nome
-                <input type="text" class="filter-input" onkeyup="filterTable(0)" placeholder="Filtrar nome...">
-            </th>
-            <th>
-                Sobrenome
-                <input type="text" class="filter-input" onkeyup="filterTable(1)" placeholder="Filtrar sobrenome...">
-            </th>
-            <th>
-                Telefone
-                <input type="text" class="filter-input" onkeyup="filterTable(2)" placeholder="Filtrar telefone...">
-            </th>
-            <th>
-                Escola
-                <input type="text" class="filter-input" onkeyup="filterTable(3)" placeholder="Filtrar escola...">
-            </th>
-            <th>Acertos</th>
-            <th>Detalhes</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for submission in submissions %}
+            <thead>
             <tr>
-                <td>{{ submission.nome }}</td>
-                <td>{{ submission.sobrenome }}</td>
-                <td>{{ submission.telefone }}</td>
-                <td>{{ submission.escola }}</td>
-                <td>{{ submission.total_acertos }}</td>
-                <td>
-                    <button class="botao-modal"
-                            onclick="showModal('{{ submission.problema }}', '{{ url_for('uploaded_file', filename=submission.imagem.split('\\')[-1]) }}', '{{ submission.solucao }}')">
-                        Ver Detalhes
-                    </button>
-                </td>
+                <th>
+                    Nome
+                    <input type="text" class="filter-input" onkeyup="filterTable(0)" placeholder="Filtrar nome...">
+                </th>
+                <th>
+                    Sobrenome
+                    <input type="text" class="filter-input" onkeyup="filterTable(1)" placeholder="Filtrar sobrenome...">
+                </th>
+                <th>
+                    Telefone
+                    <input type="text" class="filter-input" onkeyup="filterTable(2)" placeholder="Filtrar telefone...">
+                </th>
+                <th>
+                    Escola
+                    <input type="text" class="filter-input" onkeyup="filterTable(3)" placeholder="Filtrar escola...">
+                </th>
+                <th>Acertos</th>
+                <th>Detalhes</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for submission in submissions %}
+                <tr>
+                    <td>{{ submission.nome }}</td>
+                    <td>{{ submission.sobrenome }}</td>
+                    <td>{{ submission.telefone }}</td>
+                    <td>{{ submission.escola }}</td>
+                    <td>{{ submission.total_acertos }}</td>
+                    <td>
+                        <button onclick="showModal('{{ submission.problema|escapejs }}', '{{ submission.imagem }}', '{{ submission.solucao|escapejs }}')">
+                            Ver Detalhes
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
         <div style="text-align: center;">
             <a href="{{ url_for('index') }}" class="button">Voltar ao Início</a>
@@ -256,15 +258,16 @@
         var modal = document.getElementById("detailsModal");
         var span = document.getElementsByClassName("close")[0];
 
-        function showModal(problem, imageSrc, solution) {
-            console.log(imageSrc);
+        function showModal(problem, imageFilename, solution) {
+            console.log(imageFilename);
             console.log(solution);
             console.log(problem);
             document.getElementById("modalProblem").textContent = problem;
-            document.getElementById("modalImage").src = imageSrc;
+            document.getElementById("modalImage").src = "/uploads/" + imageFilename;
             document.getElementById("modalSolution").textContent = solution;
             modal.style.display = "block";
         }
+
 
         span.onclick = function () {
             modal.style.display = "none";

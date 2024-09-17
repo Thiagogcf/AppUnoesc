@@ -5,7 +5,9 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
+# app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 app.secret_key = os.urandom(24)  # Generate a random secret key
 
@@ -59,7 +61,7 @@ def submit():
     # Save to CSV
     with open('respostas.csv', 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([nome, sobrenome, telefone, escola] + answers + [problem_description, file_path, problem_solution, total_correct])
+        writer.writerow([nome, sobrenome, telefone, escola] + answers + [problem_description, filename, problem_solution, total_correct])
 
     return jsonify({
         "success": True,
