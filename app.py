@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for
 import os
 import csv
@@ -96,6 +98,10 @@ def login():
     return render_template('login.html')
 
 
+def escapejs(val):
+    return json.dumps(str(val))
+
+app.jinja_env.filters['escapejs'] = escapejs
 @app.route('/list')
 def list_submissions():
     if not session.get('logged_in'):

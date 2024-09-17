@@ -227,7 +227,7 @@
                     <td>{{ submission.escola }}</td>
                     <td>{{ submission.total_acertos }}</td>
                     <td>
-                        <button onclick="showModal('{{ submission.problema|escapejs }}', '{{ submission.imagem }}', '{{ submission.solucao|escapejs }}')">
+                        <button class="button" style="float: right; box-shadow: 0 0; border: none" onclick="showModal('{{ submission.problema|escapejs }}', '{{ submission.imagem }}', '{{ submission.solucao|escapejs }}')">
                             Ver Detalhes
                         </button>
                     </td>
