@@ -227,9 +227,12 @@
                     <td>{{ submission.escola }}</td>
                     <td>{{ submission.total_acertos }}</td>
                     <td>
-                        <button class="button" style="float: right; box-shadow: 0 0; border: none" onclick="showModal('{{ submission.problema|escapejs }}', '{{ submission.imagem }}', '{{ submission.solucao|escapejs }}')">
-                            Ver Detalhes
-                        </button>
+                        {% if submission.problema != 'Não informado' or submission.imagem != 'Não enviada' or submission.solucao != 'Não informada' %}
+                            <button class="button" style="float: right; box-shadow: 0 0; border: none"
+                                    onclick="showModal('{{ submission.problema|escapejs }}', '{{ submission.imagem }}', '{{ submission.solucao|escapejs }}')">
+                                Ver Detalhes
+                            </button>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
@@ -248,7 +251,7 @@
             <h3>Problema:</h3>
             <p id="modalProblem"></p>
             <h3>Imagem:</h3>
-            <img id="modalImage" src="" alt="Imagem enviada" style="max-width: 75%;">
+            <img id="modalImage" src="" alt="Não enviada" style="max-width: 75%;">
             <h3>Solução:</h3>
             <p id="modalSolution"></p>
         </div>
